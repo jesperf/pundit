@@ -447,6 +447,18 @@ def pundit_user
 end
 ```
 
+## Superusers
+
+In some cases you have users that should have access to everything.
+Simply define a method in your controller called `pundit_superuser` with
+the logic needed to check for such a user.
+
+```ruby
+def pundit_superuser
+  current_user.superuser?
+end
+```
+
 ## Additional context
 
 Pundit strongly encourages you to model your application in such a way that the

@@ -32,6 +32,7 @@ module Pundit
   class << self
     def authorize(user, record, query)
       policy = policy!(user, record)
+      return true if pundit_superuser
 
       unless policy.public_send(query)
         raise NotAuthorizedError.new(query: query, record: record, policy: policy)
@@ -82,6 +83,7 @@ module Pundit
       hide_action :verify_policy_scoped
       hide_action :permitted_attributes
       hide_action :pundit_user
+      hide_action :pundit_superuser
       hide_action :skip_authorization
       hide_action :skip_policy_scope
     end
@@ -108,6 +110,7 @@ module Pundit
 
     @_pundit_policy_authorized = true
 
+    return true if pundit_superuser
     policy = policy(record)
     unless policy.public_send(query)
       raise NotAuthorizedError.new(query: query, record: record, policy: policy)
@@ -148,6 +151,10 @@ module Pundit
 
   def pundit_user
     current_user
+  end
+
+  def pundit_superuser
+    false # override this in your controller if you need to
   end
 
 private
